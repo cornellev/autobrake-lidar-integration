@@ -1,2 +1,3 @@
-# autobrake-lidar-integration
-Code to be run on the Pi during Feb. 11 autobrake testing
+# Autobrake LiDAR Integration
+
+This repository contains the code that will run on the Raspberry Pi during the Level 1 Autonomy Demo (Autobrake) on Saturday, Feb. 11.
