@@ -37,5 +37,5 @@ echo "$current_ip" > ip.txt
 
 # Commit and push to git
 git add ip.txt
-git commit -m "Update IP address"
+git commit --allow-empty -m "Update IP address"
 git push origin main
