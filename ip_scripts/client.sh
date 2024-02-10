@@ -2,7 +2,7 @@
 
 # Function to retrieve IP address from GitHub
 get_ip_address() {
-    ip_address=$(curl -s https://raw.githubusercontent.com/cornellev/autobrake-lidar-integration/main/ip_scripts/ip.txt)
+    ip_address=$(curl -s https://raw.githubusercontent.com/cornellev/autobrake-lidar-integration/ip/ip_scripts/ip.txt)
     echo "$ip_address"
 }
 
