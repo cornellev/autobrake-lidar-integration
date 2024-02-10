@@ -3,17 +3,17 @@
     <arg name="arduino" default="/dev/ttyUSB1" />
     <arg name="joystick" default="false" />
 
-    <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen">
+    <node name="rplidar" pkg="rplidar_ros" type="rplidarNode" output="screen">
         <param name="serial_port" type="string" value="$(arg lidar)" />
         <param name="serial_baudrate" type="int" value="115200" />
         <param name="frame_id" type="string" value="laser" />
         <param name="inverted" type="bool" value="false" />
         <param name="angle_compensate" type="bool" value="true" />
     </node>
-    <node name="aebNode" type="emergency_brake.py" pkg="inhouse_script" output="screen" />
+    <node name="should_brake" type="emergency_brake.py" pkg="inhouse_script" output="screen" />
     <include if="$(arg joystick)"
         file="$(find pacmod_game_control)/launch/pacmod_game_control.launch" />
-    <node name="arduinoNode" pkg="rosserial_arduino" type="serial_node.py" args="$(arg arduino)"
+    <node name="arduino" pkg="rosserial_arduino" type="serial_node.py" args="$(arg arduino)"
         output="screen" />
-    <node name="finalCommandNode" pkg="inhouse_script" type="final_cmd.py" />
+    <node name="final_command" pkg="inhouse_script" type="final_cmd.py" />
 </launch>
