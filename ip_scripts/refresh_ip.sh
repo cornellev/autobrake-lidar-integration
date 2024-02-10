@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "${0%/*}"
+
 # Function to get current IP address from 'ip a' output
 get_ip_address() {
     ip_address=$(ip a | awk '/wlan0/ && /inet/ {gsub(/\/.*/, "", $2); print $2}')
