@@ -64,7 +64,7 @@ def emergency_brake(data):
 if __name__ == '__main__':
 
     max_extension_horizontal = 4997
-    max_extension_vertical = 1420
+    max_extension_vertical = 1720
     threshold_both_motion = 1300
     desired_x = 0
     desired_y = max_extension_vertical
@@ -121,7 +121,7 @@ if __name__ == '__main__':
             else:
                 vertical_motion.publish(0)
         elif latest_task == 5:
-            if not last_emergency:
+            if last_emergency == True:
                 y = int(max_extension_vertical * 1)
             else:
                 y = int(max_extension_vertical * latest_vertical_command)
@@ -136,11 +136,6 @@ if __name__ == '__main__':
                 x = 15500
             vertical_motion.publish(y)
             horizontal_motion.publish(x)
-
-        if horizontal_position == desired_x and vertical_position == desired_y:
-            rospy.sleep(1)  # introduce a 3-second delay
-            vertical_motion.publish(0)
-            latest_task = 5
 
         is_working = 1
         # latest_task = 5
