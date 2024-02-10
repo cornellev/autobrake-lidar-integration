@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Move working directory to this file
 cd "${0%/*}"
 
 # Function to get current IP address from 'ip a' output
@@ -16,6 +17,12 @@ check_internet() {
 
 # Main script
 
+# Check if there is internet access
+while ! check_internet; do
+    echo "No internet access, waiting..."
+    sleep 10
+done
+
 # Get current IP address
 current_ip=$(get_ip_address)
 
@@ -24,12 +31,6 @@ if [ -z "$current_ip" ]; then
     echo "Failed to retrieve IP address. Exiting..."
     exit 1
 fi
-
-# Check if there is internet access
-while ! check_internet; do
-    echo "No internet access, waiting..."
-    sleep 10
-done
 
 # Write IP address to file
 echo "$current_ip" > ip.txt
