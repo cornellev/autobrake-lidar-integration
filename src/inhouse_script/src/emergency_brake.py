@@ -6,13 +6,13 @@ import rospy
 from std_msgs.msg import Bool
 from sensor_msgs.msg import LaserScan
 
-PYDEVD_DISABLE_FILE_VALIDATION=1
-STOPPING_DISTANCE = .6 #m
+PYDEVD_DISABLE_FILE_VALIDATION = 1
+STOPPING_DISTANCE = 5 #m
 MAXIMUM_DISTANCE = 12 #m
 MINIMUM_DISTANCE = .5 #m
 MINAREA = 3
 
-deg = 60
+deg = 40
 
 def depth_callback(data):
     x = determine_stop(data.ranges)
@@ -20,16 +20,17 @@ def depth_callback(data):
 
 def inf_clean(arr):
     num_arr = np.array(arr)
-    num_arr[num_arr ==  inf] = MINIMUM_DISTANCE
+    num_arr[num_arr == inf] = MINIMUM_DISTANCE
     return num_arr
 
 
 def determine_stop(arr):
     out = False
-    for i in range(-(int(deg/2)),int(deg/2)):
-        if arr[i-1] < STOPPING_DISTANCE and arr[i] < STOPPING_DISTANCE and arr[i+1] < STOPPING_DISTANCE:
+    for i in range(-(int(deg / 2)), int(deg / 2)):
+        if arr[i - 1] < STOPPING_DISTANCE and arr[i] < STOPPING_DISTANCE and arr[i + 1] < STOPPING_DISTANCE:
             return True
     return False
+
 
 if __name__ == '__main__':
     try:
@@ -39,4 +40,3 @@ if __name__ == '__main__':
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
-
