@@ -13,6 +13,7 @@
     <node name="aebNode" type="emergency_brake.py" pkg="inhouse_script" output="screen" />
     <include if="$(arg joystick)"
         file="$(find pacmod_game_control)/launch/pacmod_game_control.launch" />
-    <node name="arduinoNode" pkg="rosserial_arduino" type="serial_node.py" args="$(arg arduino)" />
+    <node name="arduinoNode" pkg="rosserial_arduino" type="serial_node.py" args="$(arg arduino)"
+        output="screen" />
     <node name="finalCommandNode" pkg="inhouse_script" type="final_cmd.py" />
 </launch>
