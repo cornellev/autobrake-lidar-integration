@@ -11,14 +11,13 @@ from pacmod3_msgs.msg import SteeringCmd
 from geometry_msgs.msg import Point
 
 
-
 latest_vertical_command = 0  # Variable to store the latest command
-latest_horizontal_command=0
-latest_task=5
+latest_horizontal_command = 0
+latest_task = 5
 horizontal_position = 0
-vertical_position = 0   
+vertical_position = 0
 is_working = 0
-last_emergency= TRUE
+last_emergency = TRUE
 
 def state_callback(msg):
     # Interpret the received state message
@@ -38,40 +37,44 @@ def state_callback(msg):
 def vertical_callback(data):
     global latest_vertical_command
     print(data)
-    latest_vertical_command = data.command # Assuming 'command' is a Float32 in the SystemCmdFloat message
+    # Assuming 'command' is a Float32 in the SystemCmdFloat message
+    latest_vertical_command = data.command
 
 def horizontal_callback(data):
     global latest_horizontal_command
     print(data)
-    latest_horizontal_command = data.command # Assuming 'command' is a Float32 in the SystemCmdFloat message
-    if abs(latest_horizontal_command)<0.15:
-        latest_horizontal_command=0
+    # Assuming 'command' is a Float32 in the SystemCmdFloat message
+    latest_horizontal_command = data.command
+    if abs(latest_horizontal_command) < 0.15:
+        latest_horizontal_command = 0
 
 def task_callback(data):
     global latest_task
     print(data)
-    latest_task=data.data
-    if latest_task==0:
-        latest_task=5    
+    latest_task = data.data
+    if latest_task == 0:
+        latest_task = 5
 
 def emergency_brake(data):
     global last_emergency
     print("emergency", data.data)
-    last_emergency=data.data
+    last_emergency = data.data
 
 
 if __name__ == '__main__':
 
-    max_extension_horizontal=4997
-    max_extension_vertical=1100
-    threshold_both_motion=1300
-    desired_x=0
-    desired_y=max_extension_vertical
+    max_extension_horizontal = 4997
+    max_extension_vertical = 1420
+    threshold_both_motion = 1300
+    desired_x = 0
+    desired_y = max_extension_vertical
     rospy.init_node('command_to_brake_publisher')
 
     # Initialize the publisher for the 'brake' topic
-    vertical_motion = rospy.Publisher('motion_command_vertical', Int32, queue_size=1)
-    horizontal_motion = rospy.Publisher('motion_command_horizontal', Int32, queue_size=1)
+    vertical_motion = rospy.Publisher(
+        'motion_command_vertical', Int32, queue_size=1)
+    horizontal_motion = rospy.Publisher(
+        'motion_command_horizontal', Int32, queue_size=1)
     # horizontal_motion = rospy.Publisher('motion_command_horizontal', Int32, queue_size=1)
     # Initialize the subscriber for the topic with the provided message structure
     rospy.Subscriber('/pacmod/brake_cmd', SystemCmdFloat, vertical_callback)
@@ -85,63 +88,60 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
 
         if latest_task == 1:
-            desired_x=0
-            desired_y=max_extension_vertical-200
+            desired_x = 0
+            desired_y = max_extension_vertical - 200
             horizontal_motion.publish(desired_x)  # Adjust values as needed
-            if abs(horizontal_position-desired_x) <= threshold_both_motion:
-                vertical_motion.publish(max_extension_vertical-200)
+            if abs(horizontal_position - desired_x) <= threshold_both_motion:
+                vertical_motion.publish(max_extension_vertical - 200)
             else:
                 vertical_motion.publish(0)
 
         elif latest_task == 2:
-            desired_x=1*max_extension_horizontal
+            desired_x = 1 * max_extension_horizontal
             horizontal_motion.publish(desired_x)  # Adjust values as needed
-            if abs(horizontal_position-desired_x) <= threshold_both_motion:
-                desired_y=max_extension_vertical
+            if abs(horizontal_position - desired_x) <= threshold_both_motion:
+                desired_y = max_extension_vertical
                 vertical_motion.publish(max_extension_vertical)
             else:
                 vertical_motion.publish(0)
         elif latest_task == 3:
-            desired_x=2*max_extension_horizontal
+            desired_x = 2 * max_extension_horizontal
             horizontal_motion.publish(desired_x)  # Adjust values as needed
-            if abs(horizontal_position-desired_x) <= threshold_both_motion:
-                desired_y=max_extension_vertical
+            if abs(horizontal_position - desired_x) <= threshold_both_motion:
+                desired_y = max_extension_vertical
                 vertical_motion.publish(max_extension_vertical)
             else:
                 vertical_motion.publish(0)
         elif latest_task == 4:
-            desired_x=3*max_extension_horizontal
+            desired_x = 3 * max_extension_horizontal
             horizontal_motion.publish(desired_x)  # Adjust values as needed
-            if abs(horizontal_position-desired_x) <= threshold_both_motion:
-                desired_y=max_extension_vertical
+            if abs(horizontal_position - desired_x) <= threshold_both_motion:
+                desired_y = max_extension_vertical
                 vertical_motion.publish(max_extension_vertical)
             else:
                 vertical_motion.publish(0)
         elif latest_task == 5:
             if not last_emergency:
-                y=int(max_extension_vertical*1)
-            else:    
-                y=int(max_extension_vertical*latest_vertical_command)
-            x=int(horizontal_position + latest_horizontal_command * -50)
+                y = int(max_extension_vertical * 1)
+            else:
+                y = int(max_extension_vertical * latest_vertical_command)
+            x = int(horizontal_position + latest_horizontal_command * -50)
             # x = int(min(x, 100000))
             # y = int(min(y, max_extension_vertical))
             # x=max(x,0)
             # y=max(y,0)
-            if x<0:
-                x=0
-            if x>15500:
-                x=15500
+            if x < 0:
+                x = 0
+            if x > 15500:
+                x = 15500
             vertical_motion.publish(y)
             horizontal_motion.publish(x)
-    
-        if horizontal_position == desired_x and vertical_position==desired_y:
+
+        if horizontal_position == desired_x and vertical_position == desired_y:
             rospy.sleep(1)  # introduce a 3-second delay
             vertical_motion.publish(0)
-            latest_task=5
+            latest_task = 5
 
         is_working = 1
         # latest_task = 5
         rate.sleep()
-
-
-

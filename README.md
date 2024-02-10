@@ -17,13 +17,26 @@ This repository contains the code that will run on the Raspberry Pi during the L
 2. Start the LiDAR node (and initialize the `roscore`) and other nodes. If you don't want to have to `ssh` into a bunch of different windows, start these processes in the background by putting the ampersand (`&`) after them
 
    ```bash
+   # read from the LiDAR
    roslaunch rplidar_ros rplidar_a1.launch &
    ```
 
    ```bash
+   # output whether to break onto /AEBlidar
    rosrun inhouse_script emergency_brake.py &
    ```
 
    ```bash
+   # joystick controller stuff
+   roslaunch pacmod_game_control pacmod_game_control.launch &
+   ```
+
+   ```bash
+   # start communication with the automation board
+   rosrun rosserial_arduino serial_node.py /dev/ttyUSB1 &
+   ```
+
+   ```bash
+   # final signal to ROSSerial
    rosrun inhouse_script final_cmd.py
    ```
